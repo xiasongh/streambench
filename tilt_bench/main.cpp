@@ -48,6 +48,9 @@ int main(int argc, char** argv)
     if (testcase == "select") {
         SelectBench bench(period, size);
         time = bench.run();
+    } else if (testcase == "parallelselect") {
+        ParallelSelectBench bench(threads, period, size);
+        time = bench.run();
     } else if (testcase == "where") {
         WhereBench bench(period, size);
         time = bench.run();
