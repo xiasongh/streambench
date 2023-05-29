@@ -35,7 +35,7 @@ public:
         for (int i = 0; i < len; i++) {
             auto t = period * (i + 1);
             commit_data(reg, t);
-            auto* ptr = reinterpret_cast<T*>(fetch(reg, t, get_end_idx(reg), sizeof(T)));
+            auto* ptr = reinterpret_cast<T*>(fetch(reg, t, sizeof(T)));
             *ptr = static_cast<T>(rand() / static_cast<double>(RAND_MAX / range)) - (range / 2);
         }
     }
@@ -70,7 +70,7 @@ public:
         for (int i = 0; i < len; i++) {
             auto t = period * (i + 1);
             commit_data(reg, t);
-            auto* ptr = reinterpret_cast<Yahoo*>(fetch(reg, t, get_end_idx(reg), sizeof(Yahoo)));
+            auto* ptr = reinterpret_cast<Yahoo*>(fetch(reg, t, sizeof(Yahoo)));
             *ptr = Yahoo(rand() % 5 + 1, rand() % 5 + 1, rand() % 5 + 1);
         }
     }
@@ -122,15 +122,13 @@ public:
     {
         region_t reg;
         auto buf_size = get_buf_size(size);
-        auto tl = new ival_t[buf_size];
         auto data = new T[buf_size];
-        init_region(&reg, 0, buf_size, tl, reinterpret_cast<char*>(data));
+        init_region(&reg, 0, buf_size, reinterpret_cast<char*>(data));
         return reg;
     }
 
     static void release_reg(region_t* reg)
     {
-        delete [] reg->tl;
         delete [] reg->data;
     }
 
