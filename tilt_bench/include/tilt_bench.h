@@ -122,7 +122,7 @@ public:
     {
         region_t reg;
         auto buf_size = get_buf_size(size);
-        auto data = new T[buf_size];
+        auto data = new T[buf_size]();
         init_region(&reg, 0, buf_size, reinterpret_cast<char*>(data));
         return reg;
     }
