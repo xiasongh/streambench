@@ -46,34 +46,22 @@ int main(int argc, char** argv)
     double time = 0;
 
     if (testcase == "select") {
-        SelectBench bench(period, size);
-        time = bench.run();
-    } else if (testcase == "parallelselect") {
         ParallelSelectBench bench(threads, period, size);
         time = bench.run();
     } else if (testcase == "where") {
-        WhereBench bench(period, size);
-        time = bench.run();
-    } else if (testcase == "parallelwhere") {
         ParallelWhereBench bench(threads, period, size);
         time = bench.run();
     } else if (testcase == "aggregate") {
-        AggregateBench bench(period, size, 1000 * period);
-        time = bench.run();
-    } else if (testcase == "parallelaggregate") {
         ParallelAggregateBench bench(threads, period, size, 1000 * period);
         time = bench.run();
     } else if (testcase == "alterdur") {
         AlterDurBench bench(3, 2, size);
         time = bench.run();
     } else if (testcase == "innerjoin") {
-        InnerJoinBench bench(period, period, size);
+        ParallelJoinBench bench(threads, period, period, size);
         time = bench.run();
     } else if (testcase == "outerjoin") {
         OuterJoinBench bench(period, period, size);
-        time = bench.run();
-    } else if (testcase == "paralleljoin") {
-        ParallelJoinBench bench(threads, period, period, size);
         time = bench.run();
     } else if (testcase == "normalize") {
         ParallelNormBench bench(threads, period, 10000, size);
