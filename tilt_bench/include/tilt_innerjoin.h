@@ -60,4 +60,14 @@ private:
     dur_t rperiod;
 };
 
+class ParallelJoinBench : public ParallelBenchmark {
+public:
+    ParallelJoinBench(int threads, dur_t lperiod, dur_t rperiod, int64_t size)
+    {
+        for (int i = 0; i < threads; i++) {
+            benchs.push_back(new InnerJoinBench(lperiod, rperiod, size));
+        }
+    }
+};
+
 #endif  // TILT_BENCH_INCLUDE_TILT_INNERJOIN_H_
