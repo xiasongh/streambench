@@ -7,9 +7,11 @@
 using namespace tilt;
 using namespace tilt::tilder;
 
+#ifndef CTYPE
 #define CTYPE int8_t
 #define TTYPE types::INT8
-#define TEXPR _i8
+#define ETYPE _i8
+#endif  // CTYPE
 
 class PayloadBench : public Benchmark {
 public:
@@ -20,7 +22,7 @@ private:
     {
         auto in_sym = _sym("in", tilt::Type(TTYPE, _iter(0, -1)));
         return _Select(in_sym, [](_sym in) {
-            return in + TEXPR(3);
+            return in + ETYPE(3);
         });
     }
 

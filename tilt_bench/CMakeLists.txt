@@ -24,3 +24,5 @@ add_subdirectory(tilt/src)
 
 add_executable(main main.cpp)
 target_link_libraries(main tilt)
+
+add_compile_definitions(CTYPE=${CTYPE} TTYPE=${TTYPE} ETYPE=${ETYPE})
