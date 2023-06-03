@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <algorithm>
 #include <random>
@@ -7,31 +8,29 @@
 #include <cstdint>
 
 
-void Select(int data_length, int64_t* in_data, int64_t* out_data) {
-    std::transform(in_data, in_data + data_length, out_data, [](int64_t x) { return x + 10; });
+#define DATATYPE int64_t
+#define _STRINGIFY(s) #s
+#define STRINGIFY(s) _STRINGIFY(s)
+
+
+template<typename T>
+void Select(int data_length, T* in_data, T* out_data) {
+    std::transform(in_data, in_data + data_length, out_data, [](T x) { return x + 10; });
 }
 
-int64_t SelectBench(int64_t data_length) {
-    int64_t* in_data = new int64_t[data_length];
-    int64_t* out_data = new int64_t[data_length];
+template<typename T>
+void SelectBench(int64_t data_length) {
+    T* in_data = new T[data_length];
+    T* out_data = new T[data_length];
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int64_t> distribution(1, 100);
+    std::uniform_int_distribution<T> distribution(1, 100);
     for (int i = 0; i < data_length; ++i) {
         in_data[i] = distribution(gen);
     }
 
-    auto start_time = std::chrono::high_resolution_clock::now();
-
     Select(data_length, in_data, out_data);
-
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-
-    std::cout << "Execution time: " << duration.count() << " milliseconds" << std::endl;
-
-    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -44,13 +43,22 @@ int main(int argc, char* argv[]) {
     int data_length = std::stoi(argv[2]);
 
     std::vector<std::thread> threads(thread_count);
+
+    auto start_time = std::chrono::high_resolution_clock::now();
     for (int tid = 0; tid < thread_count; tid++) {
-        threads[tid] = std::thread(SelectBench, data_length);
+        threads[tid] = std::thread(SelectBench<DATATYPE>, data_length);
     }
     
     for (auto& thread : threads) {
         thread.join();
     }
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+    double time = duration.count();
+
+    std::cout << "Throughput[1M/s]: " << std::setprecision(3) << thread_count * data_length / time
+              << ", Threads: " << thread_count
+              << ", Datatype: " STRINGIFY(DATATYPE) << std::endl;
 
     return 0;
 }
