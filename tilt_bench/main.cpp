@@ -18,6 +18,7 @@
 #include "tilt_kurt.h"
 #include "tilt_eg.h"
 #include "tilt_yahoo.h"
+#include "tilt_payload.h"
 
 using namespace std;
 
@@ -41,6 +42,8 @@ int main(int argc, char** argv)
     string testcase = (argc > 1) ? argv[1] : "select";
     int64_t size = (argc > 2) ? atoi(argv[2]) : 100000000;
     int threads = (argc > 3) ? atoi(argv[3]) : 1;
+    int runs = (argc > 4) ? atoi(argv[4]) : 1;
+
     int64_t period = 1;
 
     double time = 0;
@@ -111,6 +114,12 @@ int main(int argc, char** argv)
     } else if (testcase == "yahoo") {
         ParallelYahooBench bench(threads, period, 100 * period, size);
         time = bench.run();
+    } else if (testcase == "payload") {
+        ParallelPayloadBench bench(threads, period, size);
+        for (int i = 0; i < runs; i++) {
+            time += bench.run();
+        }
+        time /= runs;
     } else {
         throw runtime_error("Invalid testcase");
     }

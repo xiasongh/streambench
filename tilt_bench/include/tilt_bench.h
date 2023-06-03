@@ -88,18 +88,20 @@ public:
 
     intptr_t compile()
     {
-        auto query_op = query();
-        auto query_op_sym = _sym("query", query_op);
+        if (query_addr == 0) {
+            auto query_op = query();
+            auto query_op_sym = _sym("query", query_op);
 
-        auto loop = LoopGen::Build(query_op_sym, query_op.get());
+            auto loop = LoopGen::Build(query_op_sym, query_op.get());
 
-        auto jit = ExecEngine::Get();
-        auto& llctx = jit->GetCtx();
-        auto llmod = LLVMGen::Build(loop, llctx);
-        jit->AddModule(move(llmod));
-        auto addr = jit->Lookup(loop->get_name());
+            auto jit = ExecEngine::Get();
+            auto& llctx = jit->GetCtx();
+            auto llmod = LLVMGen::Build(loop, llctx);
+            jit->AddModule(move(llmod));
+            query_addr = jit->Lookup(loop->get_name());
+        }
 
-        return addr;
+        return query_addr;
     }
 
     int64_t run()
@@ -134,6 +136,9 @@ public:
 
     virtual Op query() = 0;
     virtual void execute(intptr_t) = 0;
+
+private:
+    intptr_t query_addr = 0;
 };
 
 class ParallelBenchmark {
