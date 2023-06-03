@@ -7,6 +7,10 @@
 using namespace tilt;
 using namespace tilt::tilder;
 
+#define CTYPE int8_t
+#define TTYPE types::INT8
+#define TEXPR _i8
+
 class PayloadBench : public Benchmark {
 public:
     PayloadBench(dur_t period, int64_t size) : period(period), size(size) {}
@@ -14,18 +18,18 @@ public:
 private:
     Op query() final
     {
-        auto in_sym = _sym("in", tilt::Type(types::INT64, _iter(0, -1)));
+        auto in_sym = _sym("in", tilt::Type(TTYPE, _iter(0, -1)));
         return _Select(in_sym, [](_sym in) {
-            return in + _i64(3);
+            return in + TEXPR(3);
         });
     }
 
     void init() final
     {
-        in_reg = create_reg<int64_t>(size);
-        out_reg = create_reg<int64_t>(size);
+        in_reg = create_reg<CTYPE>(size);
+        out_reg = create_reg<CTYPE>(size);
 
-        SynthData<int64_t> dataset(period, size);
+        SynthData<CTYPE> dataset(period, size);
         dataset.fill(&in_reg);
     }
 

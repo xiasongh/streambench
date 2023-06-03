@@ -116,10 +116,7 @@ int main(int argc, char** argv)
         time = bench.run();
     } else if (testcase == "payload") {
         ParallelPayloadBench bench(threads, period, size);
-        for (int i = 0; i < runs; i++) {
-            time += bench.run();
-        }
-        time /= runs;
+        time += bench.run();
     } else {
         throw runtime_error("Invalid testcase");
     }
